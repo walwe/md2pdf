@@ -7,5 +7,7 @@ setup(name='md2pdf',
       description='Markdown to PDF converter',
       url='',
       packages=find_packages(),
-      include_package_data=True
-    )
+      include_package_data=True,
+      author='walwe',
+      license='MIT License'
+      )

@@ -6,17 +6,18 @@ from pathlib import Path
 
 class Document(object):
 
-    def __init__(self, body, file_name):
+    def __init__(self, body, file_name, stylesheet=None):
         self._body = body
         self._file_name = file_name
         self._html_file_name = None
+        self._stylesheet = Path(stylesheet)
 
     @staticmethod
-    def from_markdown(md_file):
+    def from_markdown(md_file, stylesheet=None):
         md_file = Path(md_file)
         assert md_file.is_file()
         with md_file.open() as f:
-            return Document(markdown2.markdown(f.read()), md_file)
+            return Document(markdown2.markdown(f.read()), md_file, stylesheet)
 
     @property
     def template(self):
@@ -25,7 +26,11 @@ class Document(object):
 
     @property
     def stylesheet(self):
-        fn = Path(os.path.dirname(__file__)) / 'res/css/github.css'
+        if self._stylesheet is not None:
+            fn = self._stylesheet
+        else:
+            fn = Path(os.path.dirname(__file__)) / 'res/css/github.css'
+        assert self._stylesheet.is_file()
         return fn.open().read()
 
     @property
@@ -48,6 +53,10 @@ class Document(object):
     def save_to_pdf(self, pdf_file_name=None, keep_html=False):
         self.save_to_html()
         pdf_file_name = self.pdf_file_name if pdf_file_name is None else pdf_file_name
-        call(["wkhtmltopdf", self.html_file_name, pdf_file_name])
+        call(["wkhtmltopdf",
+              "-q",
+              "--title", self._file_name.name,
+              self.html_file_name,
+              pdf_file_name])
         if not keep_html:
             self.html_file_name.unlink()
