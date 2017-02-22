@@ -1,0 +1,2 @@
+include md2pdf/res/template.html
+include md2pdf/res/css/*.css
