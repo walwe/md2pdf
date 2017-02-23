@@ -10,12 +10,14 @@ class Document(object):
         self._body = body
         self._file_name = file_name
         self._html_file_name = None
-        self._stylesheet = Path(stylesheet)
+        self._stylesheet = stylesheet
 
     @staticmethod
     def from_markdown(md_file, stylesheet=None):
         md_file = Path(md_file)
         assert md_file.is_file()
+        if stylesheet is not None:
+            stylesheet = Path(stylesheet)
         with md_file.open() as f:
             return Document(markdown2.markdown(f.read()), md_file, stylesheet)
 
@@ -30,7 +32,7 @@ class Document(object):
             fn = self._stylesheet
         else:
             fn = Path(os.path.dirname(__file__)) / 'res/css/github.css'
-        assert self._stylesheet.is_file()
+        assert fn.is_file()
         return fn.open().read()
 
     @property
