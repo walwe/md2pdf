@@ -3,6 +3,16 @@ import os.path
 from subprocess import call
 from pathlib import Path
 
+#
+# markdown2 extras:
+# https://github.com/trentm/python-markdown2/wiki/Extras
+#
+DEFAULT_MARKDOWN_EXTRAS = [
+    "tables",
+    "footnotes",
+    "fenced-code-blocks"
+]
+
 
 class Document(object):
 
@@ -12,15 +22,15 @@ class Document(object):
         self._html_file_name = None
         self._stylesheet = stylesheet
 
-    @staticmethod
-    def from_markdown(md_file, stylesheet=None):
+    @classmethod
+    def from_markdown(cls, md_file, stylesheet=None, extras=DEFAULT_MARKDOWN_EXTRAS):
         md_file = Path(md_file)
         assert md_file.is_file()
         if stylesheet is not None:
             stylesheet = Path(stylesheet)
         with md_file.open() as f:
-            return Document(
-                markdown2.markdown(f.read(), extras=["tables"]),
+            return cls(
+                markdown2.markdown(f.read(), extras=extras),
                 md_file,
                 stylesheet
             )
@@ -47,22 +57,26 @@ class Document(object):
     def pdf_file_name(self):
         return self._file_name.with_suffix('.pdf')
 
-    def save_to_html(self):
-        self.html_file_name.write_text(self.template.format(
+    def formatted_html(self):
+        return self.template.format(
             **{
                 'title': self._file_name.name,
                 'body': self._body,
                 'style': self.stylesheet
-            }
-        ))
+            })
+
+    def save_to_html(self):
+        with self.html_file_name.open(mode='w') as f:
+            f.write(self.formatted_html())
 
     def save_to_pdf(self, pdf_file_name=None, keep_html=False):
         self.save_to_html()
         pdf_file_name = self.pdf_file_name if pdf_file_name is None else pdf_file_name
         call(["wkhtmltopdf",
               "-q",
-              "--title", self._file_name.name,
-              self.html_file_name,
-              pdf_file_name])
+              "--title",
+              self._file_name.name,
+              str(self.html_file_name),
+              str(pdf_file_name)])
         if not keep_html:
             self.html_file_name.unlink()
