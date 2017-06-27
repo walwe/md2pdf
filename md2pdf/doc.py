@@ -19,7 +19,11 @@ class Document(object):
         if stylesheet is not None:
             stylesheet = Path(stylesheet)
         with md_file.open() as f:
-            return Document(markdown2.markdown(f.read()), md_file, stylesheet)
+            return Document(
+                markdown2.markdown(f.read(), extras=["tables"]),
+                md_file,
+                stylesheet
+            )
 
     @property
     def template(self):
