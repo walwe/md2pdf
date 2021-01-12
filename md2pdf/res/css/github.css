@@ -12,7 +12,8 @@
   font-size: 16px;
   line-height: 1.6;
   word-wrap: break-word;
-  padding: 3.17cm 2.54cm 2.54cm 2.54cm;
+  /*padding: 3.17cm 2.54cm 2.54cm 2.54cm;*/
+  padding: 0;
 }
 
 .markdown-body a {
@@ -659,4 +660,12 @@
   z-index: 1;
   position: relative;
   border-color: #4183c4;
+}
+
+.footnotes {
+  font-size: 12px;
+}
+
+.nobreak {
+  page-break-inside: avoid;
 }
