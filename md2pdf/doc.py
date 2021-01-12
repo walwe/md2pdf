@@ -2,6 +2,7 @@ import markdown2
 import os.path
 from subprocess import call
 from pathlib import Path
+from itertools import chain
 
 #
 # markdown2 extras:
@@ -15,6 +16,14 @@ DEFAULT_MARKDOWN_EXTRAS = [
 
 
 class Document(object):
+    _DEFAULT_WK_KWARGS = {
+        "--page-size": "A4",
+        "--margin-top": "25mm",
+        "--margin-bottom": "25mm",
+        "--margin-left": "25mm",
+        "--margin-right": "25mm",
+    }
+    _WK_CMD = "wkhtmltopdf"
 
     def __init__(self, body, file_name, stylesheet=None):
         self._body = body
@@ -69,14 +78,24 @@ class Document(object):
         with self.html_file_name.open(mode='w') as f:
             f.write(self.formatted_html())
 
-    def save_to_pdf(self, pdf_file_name=None, keep_html=False):
+    def save_to_pdf(self, pdf_file_name=None, keep_html=False, extra_wkargs=None):
         self.save_to_html()
         pdf_file_name = self.pdf_file_name if pdf_file_name is None else pdf_file_name
-        call(["wkhtmltopdf",
-              "-q",
-              "--title",
-              self._file_name.name,
-              str(self.html_file_name),
-              str(pdf_file_name)])
+
+        wkargs = self._DEFAULT_WK_KWARGS.copy()
+        wkargs['--title'] = self._file_name.name
+
+        # merge user specified wk arguments
+        if extra_wkargs is not None:
+            wkargs.update(extra_wkargs)
+
+        args = list(chain(*zip(wkargs.keys(), wkargs.values())))
+
+        cmd = [self._WK_CMD] + args + [
+           str(self.html_file_name),
+           str(pdf_file_name)
+        ]
+
+        call(cmd)
         if not keep_html:
             self.html_file_name.unlink()
