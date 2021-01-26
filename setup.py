@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 from setuptools import setup, find_packages
-from pkg_resources import get_distribution
 
 with open("README.md", "r") as f:
     long_description = f.read()
