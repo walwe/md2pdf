@@ -17,6 +17,7 @@ DEFAULT_MARKDOWN_EXTRAS = [
 
 class Document(object):
     _DEFAULT_WK_KWARGS = {
+        "--title": "",
         "--page-size": "A4",
         "--margin-top": "25mm",
         "--margin-bottom": "25mm",
@@ -47,7 +48,8 @@ class Document(object):
     @property
     def template(self):
         fn = Path(os.path.dirname(__file__)) / 'res/template.html'
-        return fn.open().read()
+        with fn.open() as f:
+            return f.read()
 
     @property
     def stylesheet(self):
@@ -56,7 +58,8 @@ class Document(object):
         else:
             fn = Path(os.path.dirname(__file__)) / 'res/css/github.css'
         assert fn.is_file()
-        return fn.open().read()
+        with fn.open() as f:
+            return f.read()
 
     @property
     def html_file_name(self):
@@ -84,6 +87,7 @@ class Document(object):
 
         wkargs = self._DEFAULT_WK_KWARGS.copy()
         wkargs['--title'] = self._file_name.name
+        wkargs['--allow'] = str(self._file_name.parent)
 
         # merge user specified wk arguments
         if extra_wkargs is not None:

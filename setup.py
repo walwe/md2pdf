@@ -1,12 +1,11 @@
 #!/usr/bin/env python
 from setuptools import setup, find_packages
-from pkg_resources import get_distribution
 
 with open("README.md", "r") as f:
     long_description = f.read()
 
 setup(name='md2pdf',
-      version='0.0.4',
+      version='0.0.5',
       description='Markdown to PDF converter',
       url='https://github.com/walwe/md2pdf',
       packages=find_packages(),
