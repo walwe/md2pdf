@@ -38,3 +38,35 @@ class TestMd2Pdf(TestCase):
             doc = Document.from_markdown(test_md_file)
             doc.save_to_pdf()
             self.assertTrue(doc.pdf_file_name.exists())
+
+    def test_local_image_in_subdir(self):
+        image_name = "TestImage.jpg"
+        sub_dir = "´testsubdir"
+        test_md = f"# Test\n![Test]({sub_dir}/{image_name})"
+        image = Image.new('RGB', size=(1, 1))
+
+        with TemporaryDirectory() as d:
+            pd = Path(d)
+            (pd / sub_dir).mkdir()
+            image.save(str(pd / sub_dir / image_name))
+            test_md_file = pd / "test.md"
+            test_md_file.write_text(test_md)
+            doc = Document.from_markdown(test_md_file)
+            doc.save_to_pdf()
+            self.assertTrue(doc.pdf_file_name.exists())
+
+    def test_local_image_outside_md_path(self):
+        with TemporaryDirectory() as d:
+            with TemporaryDirectory() as im_d:
+                image_name = "TestImage.jpg"
+                test_md = f"# Test\n![Test]({im_d}/{image_name})"
+                image = Image.new('RGB', size=(1, 1))
+                pd = Path(d)
+                image.save(str(Path(im_d) / image_name))
+                test_md_file = pd / "test.md"
+                test_md_file.write_text(test_md)
+                doc = Document.from_markdown(test_md_file)
+                doc.save_to_pdf()
+                self.assertTrue(doc.pdf_file_name.exists())
+                # TODO: how to fix?
+                self.assertTrue(False)
