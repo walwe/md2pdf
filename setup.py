@@ -10,6 +10,7 @@ setup(name='md2pdf',
       url='https://github.com/walwe/md2pdf',
       packages=find_packages(),
       include_package_data=True,
+      zip_safe=False,
       author='walwe',
       license='MIT License',
       entry_points='''
