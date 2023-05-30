@@ -5,7 +5,7 @@ Convert Markdown to PDF using [markdown2](https://github.com/trentm/python-markd
 ## Install
 
 ### Archlinux
-Use the provided [AUR package](https://aur.archlinux.org/packages/md2pdf/)
+Use the provided [AUR package](https://aur.archlinux.org/packages/md2pdf-git/)
 
 ### Other Linux Systems
 
