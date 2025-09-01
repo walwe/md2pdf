@@ -11,7 +11,8 @@ from itertools import chain
 DEFAULT_MARKDOWN_EXTRAS = [
     "tables",
     "footnotes",
-    "fenced-code-blocks"
+    "fenced-code-blocks",
+    "cuddled-lists"
 ]
 
 
